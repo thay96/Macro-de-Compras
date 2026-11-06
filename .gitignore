@@ -1,0 +1,17 @@
+# Archivos de configuración con contraseñas o APIs
+config.js
+.env
+
+# Archivos temporales de Excel
+~$*.xlsm
+~$*.xlsx
+
+# Carpetas de dependencias (si usas Node.js o similar)
+node_modules/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de registro (logs)
+*.log

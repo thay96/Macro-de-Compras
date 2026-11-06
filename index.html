@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Compras · Conequipos</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-in">
+      <img src="logo.png" alt="Conequipos" class="brand-logo" />
+      <div class="brand-text">
+        <strong>Gestión de Compras</strong>
+        <span>Cotización y selección de proveedores</span>
+      </div>
+      <nav class="tabs" id="tabs">
+        <button data-view="cotizacion" class="active">
+          Nueva cotización
+        </button>
+        <button data-view="ordenes">Órdenes de compra</button>
+
+        <button data-view="proveedores">Proveedores</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ============ COTIZACIÓN ============ -->
+    <section id="view-cotizacion" class="view active">
+      <form id="cot-form" autocomplete="off" onsubmit="return false;">
+        <div class="card">
+          <div class="card-head">
+            <h2>Producto o servicio a comprar</h2>
+            <div class="head-actions">
+              <button type="button" class="btn ghost" id="btn-reset">
+                Limpiar
+              </button>
+            </div>
+          </div>
+          <div class="grid-prod">
+            <label class="field">Tipo de producto
+              <span class="with-icon">
+                <select id="f-tipo"></select>
+                <button type="button" class="icon-btn" id="btn-add-tipo" title="Agregar tipo">+</button>
+                <button type="button" class="icon-btn danger" id="btn-del-tipo" title="Eliminar tipo">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+                  </svg>
+                </button>
+              </span>
+            </label>
+            <label class="field">Producto
+              <span class="with-icon">
+                <select id="f-producto"></select>
+                <button type="button" class="icon-btn" id="btn-add-producto" title="Agregar producto">+</button>
+                <button type="button" class="icon-btn danger" id="btn-del-producto" title="Eliminar producto">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+                  </svg>
+                </button>
+              </span>
+            </label>
+            <label class="field span2">Descripción
+              <input id="f-descripcion" type="text" placeholder="Detalle del producto o servicio">
+            </label>
+            <label class="field">Unidad de medida
+              <select id="f-unidad"></select>
+            </label>
+            <label class="field">Cantidad
+              <input id="f-cantidad" type="number" min="0" step="any" inputmode="decimal" placeholder="0">
+            </label>
+          </div>
+          <p class="hint" id="hint-productos" hidden>
+            Aún no hay productos. Crea el primero con <b>+ Nuevo producto</b>.
+          </p>
+        </div>
+
+        <datalist id="dl-prov"></datalist>
+        <div class="provs" id="provs"></div>
+
+        <div id="resumen" class="resumen" hidden></div>
+
+        <div class="actions">
+          <button type="button" class="btn secondary" id="btn-calcular">
+            Calcular
+          </button>
+          <button type="button" class="btn primary" id="btn-guardar">
+            Guardar y generar orden
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ ORDEN (vista del PDF) ============ -->
+    <section id="view-orden" class="view">
+      <div class="actions top">
+        <button class="btn ghost" id="btn-orden-volver">← Volver</button>
+        <span class="spacer"></span>
+        <button class="btn secondary" id="btn-orden-imprimir">
+          Imprimir
+        </button>
+        <button class="btn primary" id="btn-orden-pdf">Descargar PDF</button>
+      </div>
+      <div class="oc-scroll">
+        <div id="oc-host"></div>
+      </div>
+    </section>
+
+    <!-- ============ ÓRDENES ============ -->
+    <section id="view-ordenes" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Base de datos de órdenes de compra</h2>
+          <div class="head-actions">
+            <input type="search" id="q-ordenes" class="search" placeholder="Buscar proveedor, producto, N° orden…" />
+            <button class="btn secondary" id="btn-excel">
+              Descargar Excel
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tbl-ordenes">
+            <thead>
+              <tr>
+                <th>CTD</th>
+                <th>N° orden</th>
+                <th>Fecha pedido</th>
+                <th>Año</th>
+                <th>Factura o cotización</th>
+                <th>Proveedor</th>
+                <th>Dirección electrónica</th>
+                <th>Ciudad</th>
+                <th>Rep. de ventas</th>
+                <th>Producto o servicio</th>
+                <th>Tel</th>
+                <th>Dirección</th>
+                <th>NIT</th>
+                <th>Fax</th>
+                <th>Fecha de entrega</th>
+                <th>Contribuyente</th>
+                <th>Régimen</th>
+                <th>Autorretenedor</th>
+                <th>Gravada</th>
+                <th>Valor compra</th>
+                <th>Observaciones</th>
+                <th>Espec. técnicas</th>
+                <th>Cumplimiento</th>
+                <th>Precio</th>
+                <th>Apoyo técnico</th>
+                <th>Pedido completo</th>
+                <th>Promedio</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" id="hint-ordenes" hidden>
+          Todavía no hay órdenes guardadas.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ PRODUCTOS ============ -->
+    <section id="view-productos" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Productos</h2>
+          <div class="head-actions">
+            <input type="search" id="q-productos" class="search" placeholder="Buscar producto…" />
+            <button class="btn primary" id="btn-nuevo-producto-2">
+              + Nuevo producto
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tbl-productos">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Unidad</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" id="hint-productos-2" hidden>
+          No hay productos todavía.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ PROVEEDORES ============ -->
+    <section id="view-proveedores" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Proveedores</h2>
+          <div class="head-actions">
+            <input type="search" id="q-proveedores" class="search" placeholder="Buscar proveedor, NIT, ciudad…" />
+            <button class="btn primary" id="btn-nuevo-proveedor">
+              + Nuevo proveedor
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl" id="tbl-proveedores">
+            <thead>
+              <tr>
+                <th>Proveedor</th>
+                <th>NIT</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Email</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ DIÁLOGOS ============ -->
+  <dialog id="dlg-producto">
+    <form method="dialog" id="frm-producto" class="dlg">
+      <h3>Nuevo producto</h3>
+      <label class="field">Tipo de producto
+        <input name="tipo_producto" readonly>
+      </label>
+      <label class="field">Nombre del producto
+        <input name="nombre_producto" required placeholder="Ej. Báscula">
+      </label>
+      <div class="row2">
+        <label class="field">Unidad de medida
+          <select name="unidad_medida" required></select>
+        </label>
+        <label class="field">Descripción (opcional)
+          <input name="descripcion" placeholder="Ej. 36 pulgadas">
+        </label>
+      </div>
+      <div class="dlg-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar producto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-proveedor">
+    <form method="dialog" id="frm-proveedor" class="dlg">
+      <h3>Nuevo proveedor</h3>
+      <label class="field">Nombre
+        <input name="nombre" required />
+      </label>
+      <div class="row2">
+        <label class="field">NIT <input name="nit" /></label>
+        <label class="field">Ciudad <input name="ciudad" /></label>
+      </div>
+      <div class="row2">
+        <label class="field">Teléfono <input name="telefono" /></label>
+        <label class="field">Email <input name="email" type="email" /></label>
+      </div>
+      <label class="field">Dirección <input name="direccion" /></label>
+      <label class="field">Representante de ventas <input name="rep_ventas"></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar proveedor</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-oc">
+    <form method="dialog" id="frm-oc" class="dlg wide">
+      <h3>¿Generar orden de compra?</h3>
+      <p class="muted" id="oc-resumen"></p>
+      <div class="row3">
+        <label class="field">Fecha de entrega <input type="date" name="fecha_entrega" /></label>
+        <label class="field">Días de plazo <input type="number" name="dias_plazo" min="0" /></label>
+        <label class="field">IVA %
+          <input type="number" name="iva_pct" min="0" step="any" value="19" /></label>
+      </div>
+      <div class="row3">
+        <label class="field">Descuento global ($)
+          <input type="number" name="descuento_valor" min="0" step="any" value="0" /></label>
+        <label class="field">Tipo de descuento
+          <select name="descuento_tipo">
+            <option value="">— Sin descuento —</option>
+            <option>Condicionado</option>
+            <option>Pie factura</option>
+          </select>
+        </label>
+        <label class="field">Contribuyente
+          <select name="contribuyente">
+            <option value="">—</option>
+            <option>Pequeño</option>
+            <option>Grande</option>
+          </select>
+        </label>
+      </div>
+      <div class="row3">
+        <label class="field">Régimen
+          <select name="regimen">
+            <option value="">—</option>
+            <option>Común</option>
+            <option>Simplificado</option>
+          </select>
+        </label>
+        <label class="field">Elaboró <input name="elaboro" /></label>
+        <label class="field">Aprobó <input name="aprobo" /></label>
+      </div>
+      <div class="row3">
+        <label class="field">Factura o cotización
+          <input name="factura_cotizacion" placeholder="N° factura / cotización">
+        </label>
+        <label class="field">Autorretenedor
+          <select name="autorretenedor">
+            <option value="">—</option>
+            <option>Sí</option>
+            <option>No</option>
+          </select>
+        </label>
+        <label class="field">Gravada
+          <select name="gravada">
+            <option value="">—</option>
+            <option>Sí</option>
+            <option>No</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">Observaciones
+        <input name="observaciones" placeholder="Ej. nombre del equipo o destino de la compra" /></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        </button>
+        <button type="submit" class="btn primary">Sí, generar orden</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-confirm">
+    <div class="dlg">
+      <h3 id="dlg-confirm-title">¿Confirmar?</h3>
+      <p class="muted" id="dlg-confirm-msg" style="white-space:pre-line"></p>
+      <div class="dlg-actions">
+        <button type="button" class="btn ghost" id="dlg-confirm-no">Cancelar</button>
+        <button type="button" class="btn primary" id="dlg-confirm-si">Sí, continuar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="dlg-tipo">
+    <form method="dialog" id="frm-tipo" class="dlg">
+      <h3>Nuevo tipo de producto</h3>
+      <label class="field">Nombre del tipo
+        <input name="nombre" required placeholder="Ej. Tornillería">
+      </label>
+      <div class="dlg-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar tipo</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
